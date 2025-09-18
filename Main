@@ -4428,9 +4428,9 @@ Tab:AddSlider({
 })
 
 Tab:AddDropdown({
-    Name = "UI Theme",
-    Options = {"Red", "Darker", "Dark", "Purple","NeonBlue", "Sunset", "Ocean", "RoseGold", "Matrix", "Green", "Orange", "Pink", "Gold", "Cyan"},
-    Default = splib.Save.Theme or "Red",
+    Name = "界面主题",
+    Options = {"红色", "黑暗", "黑暗", "紫色","霓虹蓝", "日落", "海洋", "玫瑰金", "Matrix", "绿色", "红色", "粉红色", "黄金", "青色"},
+    Default = splib.Save.Theme or "红色",
     Callback = function(selectedTheme)
         splib:SetTheme(selectedTheme)
         splib.Save.Theme = selectedTheme
