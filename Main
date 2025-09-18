@@ -4375,11 +4375,11 @@ end
 -- local SettingTab
 
 Tab:AddSection({
-    Name = "设置",
+    Name = "Settings",
     __force_container = SettingTab
 })
 
-local uiSizeMode = "中等"
+local uiSizeMode = "Medium"
 
 local customUIsize = 600
 
@@ -4388,24 +4388,24 @@ local function mobileOffset()
 end
 
 Tab:AddDropdown({
-    Name = "界面尺寸",
-    Options = {"小", "中等", "大", "自定义"},
-    Default = "中等",
+    Name = "UI Size",
+    Options = {"Small", "Medium", "Large", "Custom"},
+    Default = "Medium",
     Flag = "UISize",
     Callback = function(v)
         uiSizeMode = v
         local offset = mobileOffset()
 
-        if v == "小" then
+        if v == "Small" then
             splib:SetScale(700 + offset)
 
-        elseif v == "中等" then
+        elseif v == "Medium" then
             splib:SetScale(600 + offset)
 
-        elseif v == "大" then
+        elseif v == "Large" then
             splib:SetScale(500 + offset)
 
-        elseif v == "自定义" then
+        elseif v == "Custom" then
             splib:SetScale(customUIsize + offset)
         end
     end,
@@ -4413,14 +4413,14 @@ Tab:AddDropdown({
 })
 
 Tab:AddSlider({
-    Name = "自定义尺寸",
+    Name = "Custom Size",
     Min = 400,
     Max = 800,
     Default = customUIsize,
     Flag = "CustomUISize",
     Callback = function(value)
         customUIsize = value
-        if uiSizeMode == "自定义" then
+        if uiSizeMode == "Custom" then
             splib:SetScale(customUIsize + mobileOffset())
         end
     end,
@@ -4428,9 +4428,9 @@ Tab:AddSlider({
 })
 
 Tab:AddDropdown({
-    Name = "界面主题",
-    Options = {"红色", "黑暗", "黑暗", "紫色","霓虹蓝", "日落", "海洋", "玫瑰金", "Matrix", "绿色", "红色", "粉红色", "黄金", "青色"},
-    Default = splib.Save.Theme or "红色",
+    Name = "UI Theme",
+    Options = {"Red", "Darker", "Dark", "Purple","NeonBlue", "Sunset", "Ocean", "RoseGold", "Matrix", "Green", "Orange", "Pink", "Gold", "Cyan"},
+    Default = splib.Save.Theme or "Red",
     Callback = function(selectedTheme)
         splib:SetTheme(selectedTheme)
         splib.Save.Theme = selectedTheme
@@ -4440,7 +4440,7 @@ Tab:AddDropdown({
 })
 
 Tab:AddToggle({
-  Name = "切换UI图标保护",
+  Name = "Toggle UI Icon Protection",
   Default = true,
   Flag = "UIProtection",
   Callback = function(enabled)
@@ -4455,7 +4455,7 @@ Tab:AddToggle({
 })
 
 Tab:AddToggle({
-    Name = "侧边栏悬浮展开",
+    Name = "Sidebar Hover Expand",
     Flag = "SidebarHover",
     Default = true,
     IsPC = true,
@@ -4471,7 +4471,7 @@ Tab:AddToggle({
 })
 
 Tab:AddToggle({
-    Name = "侧边栏悬停展开",
+    Name = "Sidebar Hover Expand",
     Flag = "SidebarHoverMobile",
     Default = true,
     IsMobile = true,
@@ -4521,7 +4521,7 @@ task.spawn(function()
 end)
 
 Tab:AddToggle({
-    Name = "主框架彩虹边框",
+    Name = "Rainbow MainFrame",
     Flag = "RainbowMainFrame",
     Default = RainbowMainFrameDefault,
     Callback = function(enabled)
@@ -4557,7 +4557,7 @@ end)
 
 
 Tab:AddToggle({
-    Name = "标题彩虹效果",
+    Name = "Rainbow Title",
     Flag = "RainbowTitle",
     Default = RainbowTitleDefault,
     Callback = function(enabled)
@@ -4570,7 +4570,7 @@ Tab:AddToggle({
 })
 
 Tab:AddToggle({
-    Name = "副标题彩虹效果",
+    Name = "Rainbow SubTitle",
     Flag = "RainbowSubTitle",
     Default = RainbowSubTitleDefault,
     Callback = function(enabled)
