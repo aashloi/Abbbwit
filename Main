@@ -2699,9 +2699,7 @@ function redzlib:MakeWindow(Configs)
 	CloseButton.Activated:Connect(Window.CloseBtn)
 	MinimizeButton.Activated:Connect(Window.MinimizeBtn)
 	return Window
-end
-
--- 在 redzlib:MakeWindow 函数中找到 Window 表的返回之前添加设置功能
+	-- ... 前面的所有代码 ...
 
 -- 添加设置按钮（在关闭按钮旁边）
 local SettingButton = SetProps(CloseButton:Clone(), {
@@ -2778,20 +2776,62 @@ SettingButton.Activated:Connect(function()
     SettingTabHandler:Enable()
 end)
 
--- 在 Window 返回之前添加设置选项卡内容
-local function AddSettingsToTab()
-    -- 清空设置选项卡
-    for _, child in ipairs(SettingTab:GetChildren()) do
-        if child:IsA("Frame") then
-            child:Destroy()
-        end
-    end
-
-    -- 添加设置部分
+-- 创建设置选项卡的函数
+local function CreateSettingsTab()
     local settingsTab = {}
     
+    -- 模拟一个假的选项卡对象，使其能够使用 AddSection 等方法
+    function settingsTab:AddSection(Configs)
+        local section = Window:MakeTab({Name = "SettingsTemp"})
+        local realSection = section:AddSection(Configs)
+        section:Destroy() -- 销毁临时选项卡，只保留分区
+        return realSection
+    end
+    
+    function settingsTab:AddDropdown(Configs)
+        local tempTab = Window:MakeTab({Name = "SettingsTemp"})
+        local dropdown = tempTab:AddDropdown(Configs)
+        tempTab:Destroy()
+        return dropdown
+    end
+    
+    function settingsTab:AddSlider(Configs)
+        local tempTab = Window:MakeTab({Name = "SettingsTemp"})
+        local slider = tempTab:AddSlider(Configs)
+        tempTab:Destroy()
+        return slider
+    end
+    
+    function settingsTab:AddToggle(Configs)
+        local tempTab = Window:MakeTab({Name = "SettingsTemp"})
+        local toggle = tempTab:AddToggle(Configs)
+        tempTab:Destroy()
+        return toggle
+    end
+    
+    function settingsTab:AddButton(Configs)
+        local tempTab = Window:MakeTab({Name = "SettingsTemp"})
+        local button = tempTab:AddButton(Configs)
+        tempTab:Destroy()
+        return button
+    end
+    
+    function settingsTab:AddParagraph(Configs)
+        local tempTab = Window:MakeTab({Name = "SettingsTemp"})
+        local paragraph = tempTab:AddParagraph(Configs)
+        tempTab:Destroy()
+        return paragraph
+    end
+    
+    return settingsTab
+end
+
+-- 初始化设置选项卡内容
+task.spawn(function()
+    local settingsTab = CreateSettingsTab()
+    
     -- 界面设置部分
-    settingsTab:AddSection({Name = "界面设置"})
+    local interfaceSection = settingsTab:AddSection({Name = "界面设置"})
     
     -- 主题选择
     settingsTab:AddDropdown({
@@ -2838,50 +2878,7 @@ local function AddSettingsToTab()
         Name = "启用动画效果",
         Default = true,
         Callback = function(value)
-            -- 这里可以添加动画效果的开关逻辑
-        end
-    })
-    
-    -- 声音反馈
-    settingsTab:AddToggle({
-        Name = "声音反馈",
-        Default = false,
-        Callback = function(value)
-            -- 声音反馈开关逻辑
-        end
-    })
-    
-    -- 自动保存
-    settingsTab:AddToggle({
-        Name = "自动保存设置",
-        Default = true,
-        Callback = function(value)
-            -- 自动保存逻辑
-        end
-    })
-    
-    -- 个性化设置部分
-    settingsTab:AddSection({Name = "个性化设置"})
-    
-    -- 透明度调节
-    settingsTab:AddSlider({
-        Name = "界面透明度",
-        Min = 0,
-        Max = 100,
-        Default = 3,
-        Callback = function(value)
-            MainFrame.BackgroundTransparency = value / 100
-        end
-    })
-    
-    -- 边框粗细
-    settingsTab:AddSlider({
-        Name = "边框粗细",
-        Min = 1,
-        Max = 5,
-        Default = 1,
-        Callback = function(value)
-            -- 这里需要找到所有边框并设置粗细
+            -- 动画效果开关逻辑
         end
     })
     
@@ -2894,16 +2891,12 @@ local function AddSettingsToTab()
                 Text = "确定要重置所有设置到默认值吗？",
                 Options = {
                     {"确认重置", function()
-                        -- 重置逻辑
                         redzlib.Save.Theme = "Darker"
                         redzlib.Save.UISize = {550, 380}
                         redzlib.Save.TabSize = 160
                         redzlib:SetTheme("Darker")
                         redzlib:SetScale(450)
                         SaveJson("redz library V5.json", redzlib.Save)
-                        
-                        -- 刷新设置选项卡
-                        AddSettingsToTab()
                     end},
                     {"取消"}
                 }
@@ -2919,23 +2912,15 @@ local function AddSettingsToTab()
         "版本信息",
         "redz Library V" .. redzlib.Info.Version
     })
-    
-    -- 作者信息
-    settingsTab:AddParagraph({
-        "作者",
-        "redz9999"
-    })
-end
-
--- 初始化设置选项卡
-AddSettingsToTab()
+end)
 
 -- 确保在主题改变时重新加载设置
 Connection.ThemeChanged:Connect(function()
-    AddSettingsToTab()
+    -- 这里可以添加主题改变时的处理逻辑
 end)
 
--- 返回 Window 表
+-- 最后返回 Window
 return Window
+end
 
 return redzlib
