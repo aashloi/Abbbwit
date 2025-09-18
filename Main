@@ -4427,72 +4427,17 @@ Tab:AddSlider({
    __force_container = SettingTab
 })
 
--- 在代码开头定义映射表
-local themeNameMap = {
-    ["红色"] = "Red",
-    ["深色"] = "Darker", 
-    ["暗黑"] = "Dark",
-    ["紫色"] = "Purple",
-    ["霓虹蓝"] = "NeonBlue",
-    ["日落"] = "Sunset",
-    ["海洋"] = "Ocean",
-    ["玫瑰金"] = "RoseGold",
-    ["矩阵"] = "Matrix",
-    ["绿色"] = "Green",
-    ["橙色"] = "Orange",
-    ["粉色"] = "Pink",
-    ["金色"] = "Gold",
-    ["青色"] = "Cyan"
-}
-
--- 反向映射用于显示
-local reverseThemeNameMap = {
-    ["Red"] = "红色",
-    ["Darker"] = "深色",
-    ["Dark"] = "暗黑",
-    ["Purple"] = "紫色",
-    ["NeonBlue"] = "霓虹蓝",
-    ["Sunset"] = "日落",
-    ["Ocean"] = "海洋",
-    ["RoseGold"] = "玫瑰金",
-    ["Matrix"] = "矩阵",
-    ["Green"] = "绿色",
-    ["Orange"] = "橙色",
-    ["Pink"] = "粉色",
-    ["Gold"] = "金色",
-    ["Cyan"] = "青色"
-}
-
--- 修改下拉菜单代码
 Tab:AddDropdown({
-    Name = "界面主题",
-    Options = {"红色", "深色", "暗黑", "紫色", "霓虹蓝", "日落", "海洋", "玫瑰金", "矩阵", "绿色", "橙色", "粉色", "金色", "青色"},
-    Default = reverseThemeNameMap[splib.Save.Theme] or "红色",  -- 显示中文但内部用英文
-    Flag = "UITheme",
-    Callback = function(selectedChineseTheme)
-        local englishThemeName = themeNameMap[selectedChineseTheme]
-        if englishThemeName then
-            splib:SetTheme(englishThemeName)
-            splib.Save.Theme = englishThemeName
-            SaveJson("sp library.json", splib.Save)
-        end
+    Name = "UI主题",
+    Options = {"Red", "Darker", "Dark", "Purple","NeonBlue", "Sunset", "Ocean", "RoseGold", "Matrix", "Green", "Orange", "Pink", "Gold", "Cyan"},
+    Default = splib.Save.Theme or "Red",
+    Callback = function(selectedTheme)
+        splib:SetTheme(selectedTheme)
+        splib.Save.Theme = selectedTheme
+        SaveJson("sp library.json", splib.Save)
     end,
     __force_container = SettingTab
 })
-
--- 确保 splib:SetTheme 函数能正确处理
-function splib:SetTheme(themeName)
-    local actualThemeName = themeNameMap[themeName] or themeName  -- 如果是中文就转换
-    
-    if not self.Themes[actualThemeName] then
-        warn("主题不存在: " .. tostring(themeName))
-        return
-    end
-    
-    -- 原有的主题应用逻辑...
-    Theme = self.Themes[actualThemeName]
-    -- 更新所有UI元素的颜色
-end
 
 Tab:AddToggle({
   Name = "切换UI图标保护",
