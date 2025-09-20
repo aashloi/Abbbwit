@@ -664,56 +664,82 @@ function OrionLib:MakeWindow(WindowConfig)
 AddConnection(MinimizeBtn.MouseButton1Up, function()
     if Minimized then
         -- 恢复正常窗口
-        TweenService:Create(MainWindow, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Size = UDim2.new(0, 615, 0, 344)}):Play()
-        MinimizeBtn.Ico.Image = "rbxassetid://7072719338"
-        MainWindow.ClipsDescendants = false
-        WindowStuff.Visible = true
-        WindowTopBarLine.Visible = true
-    else
-        -- 修改为正方形悬浮条
-        MainWindow.ClipsDescendants = true
-        WindowTopBarLine.Visible = false
-        MinimizeBtn.Ico.Image = "rbxassetid://7072720870"
-        
-        -- 正方形尺寸（宽高相等）
         TweenService:Create(MainWindow, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
-            Size = UDim2.new(0, 200, 0, 200), -- 正方形尺寸
-            Position = UDim2.new(0.5, -100, 0.5, -100) -- 居中定位
+            Size = UDim2.new(0, 615, 0, 344),
+            Position = UDim2.new(0.5, -307, 0.5, -172)
+        }):Play()
+        -- ...其他恢复代码
+    else
+        -- 最小化为正方形悬浮窗
+        TweenService:Create(MainWindow, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+            Size = UDim2.new(0, 150, 0, 150), -- 正方形尺寸
+            Position = UDim2.new(0.5, -75, 0.5, -75) -- 居中定位
         }):Play()
         
-        -- 隐藏原有元素
-        WindowStuff.Visible = false
+        -- 清理原有悬浮元素
+        if FloatingPanel then FloatingPanel:Destroy() end
         
-        -- 添加正方形悬浮内容
-        local FloatingContent = SetProps(MakeElement("RoundFrame", Color3.fromRGB(25,25,25), 0, 10), {
+        -- 创建新悬浮面板
+        FloatingPanel = SetProps(MakeElement("Frame"), {
             Parent = MainWindow,
-            Size = UDim2.new(0, 180, 0, 180),
-            Position = UDim2.new(0.5, -90, 0.5, -90),
+            Size = UDim2.new(1, 0, 1, 0),
+            BackgroundTransparency = 1,
             ClipsDescendants = true
         })
         
-        -- 添加自定义背景图片
-        SetProps(MakeElement("Image", "rbxassetid://YOUR_IMAGE_ID"), {
-            Parent = FloatingContent,
-            Size = UDim2.new(1, 0, 1, 0),
-            ImageColor3 = Color3.fromRGB(255,255,255),
-            ImageTransparency = 0.8
+        -- 基础悬浮窗
+        local BaseWindow = SetProps(MakeElement("RoundFrame", Color3.fromRGB(35,35,35), 0, 10), {
+            Parent = FloatingPanel,
+            Size = UDim2.new(0, 130, 0, 130),
+            Position = UDim2.new(0.5, -65, 0.5, -65),
+            UICorner = MakeElement("Corner", 0, 15),
+            UIStroke = MakeElement("Stroke", Color3.fromRGB(60,60,60), 2)
         })
         
-        -- 添加展开按钮
-        local ExpandBtn = SetProps(MakeElement("ImageButton", "rbxassetid://7072720870"), {
-            Parent = FloatingContent,
-            Size = UDim2.new(0, 40, 0, 40),
-            Position = UDim2.new(1, -50, 1, -50),
-            AnchorPoint = Vector2.new(1, 1),
+        -- 加减按钮容器
+        local ButtonGroup = SetProps(MakeElement("TFrame"), {
+            Parent = BaseWindow,
+            Size = UDim2.new(1, 0, 0, 40),
+            Position = UDim2.new(0, 0, 1, -40)
+        })
+        
+        -- 加号按钮
+        local ExpandBtn = SetProps(MakeElement("ImageButton", "rbxassetid://8848907031"), {
+            Parent = ButtonGroup,
+            Size = UDim2.new(0.5, 0, 1, 0),
+            ImageColor3 = Color3.fromRGB(255, 255, 255),
             BackgroundTransparency = 1
         })
         
-        -- 展开功能
+        -- 减号按钮
+        local CollapseBtn = SetProps(MakeElement("ImageButton", "rbxassetid://8848907030"), {
+            Parent = ButtonGroup,
+            Size = UDim2.new(0.5, 0, 1, 0),
+            Position = UDim2.new(0.5, 0, 0, 0),
+            ImageColor3 = Color3.fromRGB(255, 255, 255),
+            BackgroundTransparency = 1
+        })
+        
+        -- 按钮交互逻辑
         ExpandBtn.MouseButton1Click:Connect(function()
-            Minimized = not Minimized
-            TweenService:Create(MainWindow, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Size = UDim2.new(0, 615, 0, 344)}):Play()
+            TweenService:Create(BaseWindow, TweenInfo.new(0.3), {
+                Size = UDim2.new(0, 400, 0, 400),
+                Position = UDim2.new(0.5, -200, 0.5, -200)
+            }):Play()
         end)
+        
+        CollapseBtn.MouseButton1Click:Connect(function()
+            TweenService:Create(BaseWindow, TweenInfo.new(0.3), {
+                Size = UDim2.new(0, 130, 0, 130),
+                Position = UDim2.new(0.5, -65, 0.5, -65)
+            }):Play()
+        end)
+        
+        -- 设备适配
+        if UserInputService.TouchEnabled then
+            BaseWindow.Size = UDim2.new(0, 100, 0, 100)
+            BaseWindow.Position = UDim2.new(0.5, -50, 0.5, -50)
+        end
     end
     Minimized = not Minimized
 end)
