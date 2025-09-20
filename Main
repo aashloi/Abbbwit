@@ -644,38 +644,16 @@ function OrionLib:MakeWindow(WindowConfig)
 
 	AddDraggingFunctionality(DragPoint, MainWindow)
 
--- 在关闭按钮回调中添加悬浮按钮
-AddConnection(CloseBtn.MouseButton1Up, function()
-    MainWindow.Visible = false
-    UIHidden = true
-    
-    -- 创建正方形悬浮按钮
-    local FloatingButton = SetProps(MakeElement("ImageButton", "rbxassetid://YOUR_IMAGE_ID"), {
-        Parent = Orion,
-        Position = UDim2.new(1, -40, 1, -40), -- 右下角位置
-        Size = UDim2.new(0, 40, 0, 40), -- 正方形尺寸
-        AnchorPoint = Vector2.new(1, 1),
-        BackgroundTransparency = 1,
-        ImageColor3 = Color3.fromRGB(255, 255, 255),
-        ImageTransparency = 0.8
-    })
-
-    -- 添加拖动功能
-    AddDraggingFunctionality(FloatingButton, FloatingButton)
-
-    -- 点击恢复窗口
-    FloatingButton.MouseButton1Click:Connect(function()
-        MainWindow.Visible = true
-        FloatingButton:Destroy()
-    end)
-
-    OrionLib:MakeNotification({
-        Name = "Interface Hidden",
-        Content = "Click the floating button to reopen",
-        Time = 5
-    })
-    WindowConfig.CloseCallback()
-end)
+	AddConnection(CloseBtn.MouseButton1Up, function()
+		MainWindow.Visible = false
+		UIHidden = true
+		OrionLib:MakeNotification({
+			Name = "Interface Hidden",
+			Content = "Tap RightShift to reopen the interface",
+			Time = 5
+		})
+		WindowConfig.CloseCallback()
+	end)
 
 	AddConnection(UserInputService.InputBegan, function(Input)
 		if Input.KeyCode == Enum.KeyCode.RightShift and UIHidden then
@@ -683,25 +661,62 @@ end)
 		end
 	end)
 
-	AddConnection(MinimizeBtn.MouseButton1Up, function()
-		if Minimized then
-			TweenService:Create(MainWindow, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Size = UDim2.new(0, 615, 0, 344)}):Play()
-			MinimizeBtn.Ico.Image = "rbxassetid://7072719338"
-			wait(.02)
-			MainWindow.ClipsDescendants = false
-			WindowStuff.Visible = true
-			WindowTopBarLine.Visible = true
-		else
-			MainWindow.ClipsDescendants = true
-			WindowTopBarLine.Visible = false
-			MinimizeBtn.Ico.Image = "rbxassetid://7072720870"
-
-			TweenService:Create(MainWindow, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Size = UDim2.new(0, WindowName.TextBounds.X + 140, 0, 50)}):Play()
-			wait(0.1)
-			WindowStuff.Visible = false	
-		end
-		Minimized = not Minimized    
-	end)
+AddConnection(MinimizeBtn.MouseButton1Up, function()
+    if Minimized then
+        -- 恢复正常窗口
+        TweenService:Create(MainWindow, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Size = UDim2.new(0, 615, 0, 344)}):Play()
+        MinimizeBtn.Ico.Image = "rbxassetid://7072719338"
+        MainWindow.ClipsDescendants = false
+        WindowStuff.Visible = true
+        WindowTopBarLine.Visible = true
+    else
+        -- 修改为正方形悬浮条
+        MainWindow.ClipsDescendants = true
+        WindowTopBarLine.Visible = false
+        MinimizeBtn.Ico.Image = "rbxassetid://7072720870"
+        
+        -- 正方形尺寸（宽高相等）
+        TweenService:Create(MainWindow, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+            Size = UDim2.new(0, 200, 0, 200), -- 正方形尺寸
+            Position = UDim2.new(0.5, -100, 0.5, -100) -- 居中定位
+        }):Play()
+        
+        -- 隐藏原有元素
+        WindowStuff.Visible = false
+        
+        -- 添加正方形悬浮内容
+        local FloatingContent = SetProps(MakeElement("RoundFrame", Color3.fromRGB(25,25,25), 0, 10), {
+            Parent = MainWindow,
+            Size = UDim2.new(0, 180, 0, 180),
+            Position = UDim2.new(0.5, -90, 0.5, -90),
+            ClipsDescendants = true
+        })
+        
+        -- 添加自定义背景图片
+        SetProps(MakeElement("Image", "rbxassetid://YOUR_IMAGE_ID"), {
+            Parent = FloatingContent,
+            Size = UDim2.new(1, 0, 1, 0),
+            ImageColor3 = Color3.fromRGB(255,255,255),
+            ImageTransparency = 0.8
+        })
+        
+        -- 添加展开按钮
+        local ExpandBtn = SetProps(MakeElement("ImageButton", "rbxassetid://7072720870"), {
+            Parent = FloatingContent,
+            Size = UDim2.new(0, 40, 0, 40),
+            Position = UDim2.new(1, -50, 1, -50),
+            AnchorPoint = Vector2.new(1, 1),
+            BackgroundTransparency = 1
+        })
+        
+        -- 展开功能
+        ExpandBtn.MouseButton1Click:Connect(function()
+            Minimized = not Minimized
+            TweenService:Create(MainWindow, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Size = UDim2.new(0, 615, 0, 344)}):Play()
+        end)
+    end
+    Minimized = not Minimized
+end)
 
 	local function LoadSequence()
 		MainWindow.Visible = false
