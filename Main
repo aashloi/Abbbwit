@@ -461,37 +461,6 @@ function OrionLib:Init()
 	end	
 end	
 
--- Orion库初始化后添加
-local FloatingButton = SetProps(MakeElement("ImageButton", "rbxassetid://8848907031"), {
-    Parent = Orion,
-    Size = UDim2.new(0, 50, 0, 50),
-    Position = UDim2.new(1, -60, 1, -60),
-    AnchorPoint = Vector2.new(1, 1),
-    BackgroundTransparency = 1,
-    ImageColor3 = Color3.fromRGB(255, 255, 255),
-    UICorner = MakeElement("Corner", 0, 25)
-})
-
-local IsExpanded = false
-FloatingButton.MouseButton1Click:Connect(function()
-    IsExpanded = not IsExpanded
-    TweenService:Create(FloatingButton, TweenInfo.new(0.3), {
-        Size = IsExpanded and UDim2.new(0, 200, 0, 200) or UDim2.new(0, 50, 0, 50),
-        Position = IsExpanded and UDim2.new(0.5, -100, 0.5, -100) or UDim2.new(1, -60, 1, -60)
-    }):Play()
-    MainWindow.Visible = IsExpanded
-end)
-
-AddConnection(CloseBtn.MouseButton1Up, function()
-    MainWindow.Visible = false
-    FloatingButton.Size = UDim2.new(0, 50, 0, 50)
-    FloatingButton.Position = UDim2.new(1, -60, 1, -60)
-    IsExpanded = false
-    -- 其他原有关闭逻辑
-end)
-
-AddDraggingFunctionality(FloatingButton, FloatingButton)
-
 function OrionLib:MakeWindow(WindowConfig)
 	local FirstTab = true
 	local Minimized = false
@@ -692,25 +661,62 @@ function OrionLib:MakeWindow(WindowConfig)
 		end
 	end)
 
-	AddConnection(MinimizeBtn.MouseButton1Up, function()
-		if Minimized then
-			TweenService:Create(MainWindow, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Size = UDim2.new(0, 615, 0, 344)}):Play()
-			MinimizeBtn.Ico.Image = "rbxassetid://7072719338"
-			wait(.02)
-			MainWindow.ClipsDescendants = false
-			WindowStuff.Visible = true
-			WindowTopBarLine.Visible = true
-		else
-			MainWindow.ClipsDescendants = true
-			WindowTopBarLine.Visible = false
-			MinimizeBtn.Ico.Image = "rbxassetid://7072720870"
+-- 在MinimizeBtn.MouseButton1Up事件中添加以下代码
+AddConnection(MinimizeBtn.MouseButton1Up, function()
+    if Minimized then
+        -- 恢复正常窗口
+        TweenService:Create(MainWindow, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+            Size = UDim2.new(0, 615, 0, 344),
+            Position = UDim2.new(0.5, -307, 0.5, -172)
+        }):Play()
+        -- 显示Tab容器
+        WindowStuff.Visible = true
+        -- 其他恢复逻辑
+    else
+        -- 最小化为细长条（示例尺寸：600x30）
+        TweenService:Create(MainWindow, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+            Size = UDim2.new(0, 600, 0, 30), -- 缩小高度
+            Position = UDim2.new(0.5, -300, 1, -30) -- 底边定位
+        }):Play()
+        -- 隐藏Tab容器
+        WindowStuff.Visible = false
+        -- 显示简化按钮
+        ShowSimplifiedButtons()
+    end
+    Minimized = not Minimized
+end)
 
-			TweenService:Create(MainWindow, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Size = UDim2.new(0, WindowName.TextBounds.X + 140, 0, 50)}):Play()
-			wait(0.1)
-			WindowStuff.Visible = false	
-		end
-		Minimized = not Minimized    
-	end)
+-- 简化按钮函数
+local function ShowSimplifiedButtons()
+    -- 创建按钮容器
+    local ButtonHolder = SetProps(MakeElement("TFrame"), {
+        Parent = MainWindow,
+        Size = UDim2.new(1, 0, 1, 0),
+        BackgroundTransparency = 1
+    })
+
+    -- 加号按钮
+    SetProps(MakeElement("ImageButton", "rbxassetid://8848907031"), {
+        Parent = ButtonHolder,
+        Size = UDim2.new(0, 30, 0, 30),
+        Position = UDim2.new(1, -40, 0.5, 0),
+        AnchorPoint = Vector2.new(1, 0.5),
+        ImageColor3 = Color3.fromRGB(200, 200, 200),
+        BackgroundTransparency = 1,
+        UICorner = MakeElement("Corner", 0, 5)
+    })
+
+    -- 减号按钮
+    SetProps(MakeElement("ImageButton", "rbxassetid://8848907030"), {
+        Parent = ButtonHolder,
+        Size = UDim2.new(0, 30, 0, 30),
+        Position = UDim2.new(1, -80, 0.5, 0),
+        AnchorPoint = Vector2.new(1, 0.5),
+        ImageColor3 = Color3.fromRGB(200, 200, 200),
+        BackgroundTransparency = 1,
+        UICorner = MakeElement("Corner", 0, 5)
+    })
+end
 
 	local function LoadSequence()
 		MainWindow.Visible = false
