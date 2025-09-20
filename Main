@@ -597,59 +597,85 @@ function OrionLib:MakeWindow(WindowConfig)
 		Position = UDim2.new(0, 0, 1, -1)
 	}), "Stroke")
 
-    -- 修改主窗口部分
-local MainWindow = AddThemeObject(SetChildren(SetProps(MakeElement("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 10), {
-    Parent = Orion,
-    Position = UDim2.new(0.5, -300, 0.5, -300), -- 居中定位
-    Size = UDim2.new(0, 600, 0, 600), -- 正方形尺寸
-    ClipsDescendants = true
-}), {
-    -- 添加自定义背景图片
-    SetProps(MakeElement("Image", "rbxassetid://YOUR_IMAGE_ID"), {
-        AnchorPoint = Vector2.new(0.5, 0.5),
-        Position = UDim2.new(0.5, 0, 0.5, 0),
-        Size = UDim2.new(1, 0, 1, 0),
-        ImageColor3 = Color3.fromRGB(255, 255, 255), -- 可调整图片颜色
-        ImageTransparency = 0.8 -- 透明度设置
-    }),
-    -- 保持原有功能元素
-    SetChildren(SetProps(MakeElement("TFrame"), {
-        Size = UDim2.new(1, 0, 0, 50),
-        Name = "TopBar"
-    }), {
-        WindowName,
-        WindowTopBarLine,
-        -- 保持按钮布局
-        AddThemeObject(SetChildren(SetProps(MakeElement("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 7), {
-            Size = UDim2.new(0, 70, 0, 30),
-            Position = UDim2.new(1, -90, 0, 10)
-        }), {
-            AddThemeObject(MakeElement("Stroke"), "Stroke"),
-            AddThemeObject(SetProps(MakeElement("Frame"), {
-                Size = UDim2.new(0, 1, 1, 0),
-                Position = UDim2.new(0.5, 0, 0, 0)
-            }), "Stroke"), 
-            CloseBtn,
-            MinimizeBtn
-        }), "Second"), 
-    }),
-    DragPoint,
-    WindowStuff
-}), "Main")
+	local MainWindow = AddThemeObject(SetChildren(SetProps(MakeElement("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 10), {
+		Parent = Orion,
+		Position = UDim2.new(0.5, -307, 0.5, -172),
+		Size = UDim2.new(0, 615, 0, 344),
+		ClipsDescendants = true
+	}), {
+		--SetProps(MakeElement("Image", "rbxassetid://3523728077"), {
+		--	AnchorPoint = Vector2.new(0.5, 0.5),
+		--	Position = UDim2.new(0.5, 0, 0.5, 0),
+		--	Size = UDim2.new(1, 80, 1, 320),
+		--	ImageColor3 = Color3.fromRGB(33, 33, 33),
+		--	ImageTransparency = 0.7
+		--}),
+		SetChildren(SetProps(MakeElement("TFrame"), {
+			Size = UDim2.new(1, 0, 0, 50),
+			Name = "TopBar"
+		}), {
+			WindowName,
+			WindowTopBarLine,
+			AddThemeObject(SetChildren(SetProps(MakeElement("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 7), {
+				Size = UDim2.new(0, 70, 0, 30),
+				Position = UDim2.new(1, -90, 0, 10)
+			}), {
+				AddThemeObject(MakeElement("Stroke"), "Stroke"),
+				AddThemeObject(SetProps(MakeElement("Frame"), {
+					Size = UDim2.new(0, 1, 1, 0),
+					Position = UDim2.new(0.5, 0, 0, 0)
+				}), "Stroke"), 
+				CloseBtn,
+				MinimizeBtn
+			}), "Second"), 
+		}),
+		DragPoint,
+		WindowStuff
+	}), "Main")
 
--- 修改拖动功能（保持原逻辑）
-AddDraggingFunctionality(DragPoint, MainWindow)
-
-	AddConnection(CloseBtn.MouseButton1Up, function()
-		MainWindow.Visible = false
-		UIHidden = true
-		OrionLib:MakeNotification({
-			Name = "Interface Hidden",
-			Content = "Tap RightShift to reopen the interface",
-			Time = 5
+	if WindowConfig.ShowIcon then
+		WindowName.Position = UDim2.new(0, 50, 0, -24)
+		local WindowIcon = SetProps(MakeElement("Image", WindowConfig.Icon), {
+			Size = UDim2.new(0, 20, 0, 20),
+			Position = UDim2.new(0, 25, 0, 15)
 		})
-		WindowConfig.CloseCallback()
-	end)
+		WindowIcon.Parent = MainWindow.TopBar
+	end	
+
+	AddDraggingFunctionality(DragPoint, MainWindow)
+
+-- 在关闭按钮回调中添加悬浮按钮
+AddConnection(CloseBtn.MouseButton1Up, function()
+    MainWindow.Visible = false
+    UIHidden = true
+    
+    -- 创建正方形悬浮按钮
+    local FloatingButton = SetProps(MakeElement("ImageButton", "rbxassetid://YOUR_IMAGE_ID"), {
+        Parent = Orion,
+        Position = UDim2.new(1, -40, 1, -40), -- 右下角位置
+        Size = UDim2.new(0, 40, 0, 40), -- 正方形尺寸
+        AnchorPoint = Vector2.new(1, 1),
+        BackgroundTransparency = 1,
+        ImageColor3 = Color3.fromRGB(255, 255, 255),
+        ImageTransparency = 0.8
+    })
+
+    -- 添加拖动功能
+    AddDraggingFunctionality(FloatingButton, FloatingButton)
+
+    -- 点击恢复窗口
+    FloatingButton.MouseButton1Click:Connect(function()
+        MainWindow.Visible = true
+        FloatingButton:Destroy()
+    end)
+
+    OrionLib:MakeNotification({
+        Name = "Interface Hidden",
+        Content = "Click the floating button to reopen",
+        Time = 5
+    })
+    WindowConfig.CloseCallback()
+end)
 
 	AddConnection(UserInputService.InputBegan, function(Input)
 		if Input.KeyCode == Enum.KeyCode.RightShift and UIHidden then
