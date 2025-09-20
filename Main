@@ -661,61 +661,82 @@ function OrionLib:MakeWindow(WindowConfig)
 		end
 	end)
 
--- 在MinimizeBtn.MouseButton1Up事件中添加以下代码
+-- 在MinimizeBtn.MouseButton1Up事件中
 AddConnection(MinimizeBtn.MouseButton1Up, function()
     if Minimized then
         -- 恢复正常窗口
-        TweenService:Create(MainWindow, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+        TweenService:Create(MainWindow, TweenInfo.new(0.5), {
             Size = UDim2.new(0, 615, 0, 344),
             Position = UDim2.new(0.5, -307, 0.5, -172)
         }):Play()
-        -- 显示Tab容器
         WindowStuff.Visible = true
-        -- 其他恢复逻辑
     else
-        -- 最小化为细长条（示例尺寸：600x30）
-        TweenService:Create(MainWindow, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
-            Size = UDim2.new(0, 600, 0, 30), -- 缩小高度
-            Position = UDim2.new(0.5, -300, 1, -30) -- 底边定位
+        -- 最小化为中等高度（示例尺寸：600x80）
+        TweenService:Create(MainWindow, TweenInfo.new(0.5), {
+            Size = UDim2.new(0, 600, 0, 80),
+            Position = UDim2.new(0.5, -300, 0.5, -40) -- 居中定位
         }):Play()
-        -- 隐藏Tab容器
         WindowStuff.Visible = false
-        -- 显示简化按钮
-        ShowSimplifiedButtons()
+        ShowEnhancedButtons() -- 调用增强按钮函数
     end
     Minimized = not Minimized
 end)
 
--- 简化按钮函数
-local function ShowSimplifiedButtons()
-    -- 创建按钮容器
+-- 增强按钮函数
+local function ShowEnhancedButtons()
     local ButtonHolder = SetProps(MakeElement("TFrame"), {
         Parent = MainWindow,
-        Size = UDim2.new(1, 0, 1, 0),
-        BackgroundTransparency = 1
+        Size = UDim2.new(1, 0, 1, 0)
     })
 
-    -- 加号按钮
+    -- 加号按钮（展开）
     SetProps(MakeElement("ImageButton", "rbxassetid://8848907031"), {
         Parent = ButtonHolder,
-        Size = UDim2.new(0, 30, 0, 30),
-        Position = UDim2.new(1, -40, 0.5, 0),
+        Size = UDim2.new(0, 40, 0, 40),
+        Position = UDim2.new(1, -130, 0.5, 0),
         AnchorPoint = Vector2.new(1, 0.5),
         ImageColor3 = Color3.fromRGB(200, 200, 200),
-        BackgroundTransparency = 1,
-        UICorner = MakeElement("Corner", 0, 5)
-    })
+        UICorner = MakeElement("Corner", 0, 8)
+    }).MouseButton1Click:Connect(function()
+        Minimized = false
+        TweenService:Create(MainWindow, TweenInfo.new(0.5), {
+            Size = UDim2.new(0, 615, 0, 344)
+        }):Play()
+    end)
 
-    -- 减号按钮
+    -- 减号按钮（最小化）
     SetProps(MakeElement("ImageButton", "rbxassetid://8848907030"), {
         Parent = ButtonHolder,
-        Size = UDim2.new(0, 30, 0, 30),
+        Size = UDim2.new(0, 40, 0, 40),
         Position = UDim2.new(1, -80, 0.5, 0),
         AnchorPoint = Vector2.new(1, 0.5),
         ImageColor3 = Color3.fromRGB(200, 200, 200),
-        BackgroundTransparency = 1,
-        UICorner = MakeElement("Corner", 0, 5)
-    })
+        UICorner = MakeElement("Corner", 0, 8)
+    }).MouseButton1Click:Connect(function()
+        Minimized = true
+        TweenService:Create(MainWindow, TweenInfo.new(0.5), {
+            Size = UDim2.new(0, 600, 0, 80)
+        }):Play()
+    end)
+
+    -- 关闭按钮（完全隐藏）
+    SetProps(MakeElement("ImageButton", "rbxassetid://7072725342"), {
+        Parent = ButtonHolder,
+        Size = UDim2.new(0, 40, 0, 40),
+        Position = UDim2.new(1, -30, 0.5, 0),
+        AnchorPoint = Vector2.new(1, 0.5),
+        ImageColor3 = Color3.fromRGB(200, 200, 200),
+        UICorner = MakeElement("Corner", 0, 8)
+    }).MouseButton1Click:Connect(function()
+        MainWindow.Visible = false
+        Minimized = false
+        -- 调用原关闭通知
+        OrionLib:MakeNotification({
+            Name = "Interface Hidden",
+            Content = "Tap RightShift to reopen",
+            Time = 5
+        })
+    end)
 end
 
 	local function LoadSequence()
