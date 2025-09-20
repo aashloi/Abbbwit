@@ -522,6 +522,19 @@ function OrionLib:MakeWindow(WindowConfig)
 		}), "Text")
 	})
 
+	-- 添加小眼睛按钮
+	local EyeBtn = SetChildren(SetProps(MakeElement("Button"), {
+		Size = UDim2.new(0.5, 0, 1, 0),
+		Position = UDim2.new(0, 0, 0, 0),
+		BackgroundTransparency = 1
+	}), {
+		AddThemeObject(SetProps(MakeElement("Image", "rbxassetid://7072720870"), {
+			Position = UDim2.new(0, 9, 0, 6),
+			Size = UDim2.new(0, 18, 0, 18),
+			Name = "Ico"
+		}), "Text")
+	})
+
 	local DragPoint = SetProps(MakeElement("TFrame"), {
 		Size = UDim2.new(1, 0, 0, 50)
 	})
@@ -603,13 +616,6 @@ function OrionLib:MakeWindow(WindowConfig)
 		Size = UDim2.new(0, 615, 0, 344),
 		ClipsDescendants = true
 	}), {
-		--SetProps(MakeElement("Image", "rbxassetid://3523728077"), {
-		--	AnchorPoint = Vector2.new(0.5, 0.5),
-		--	Position = UDim2.new(0.5, 0, 0.5, 0),
-		--	Size = UDim2.new(1, 80, 1, 320),
-		--	ImageColor3 = Color3.fromRGB(33, 33, 33),
-		--	ImageTransparency = 0.7
-		--}),
 		SetChildren(SetProps(MakeElement("TFrame"), {
 			Size = UDim2.new(1, 0, 0, 50),
 			Name = "TopBar"
@@ -617,16 +623,21 @@ function OrionLib:MakeWindow(WindowConfig)
 			WindowName,
 			WindowTopBarLine,
 			AddThemeObject(SetChildren(SetProps(MakeElement("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 7), {
-				Size = UDim2.new(0, 70, 0, 30),
-				Position = UDim2.new(1, -90, 0, 10)
+				Size = UDim2.new(0, 105, 0, 30), -- 宽度增加以容纳小眼睛按钮
+				Position = UDim2.new(1, -125, 0, 10) -- 位置调整
 			}), {
 				AddThemeObject(MakeElement("Stroke"), "Stroke"),
 				AddThemeObject(SetProps(MakeElement("Frame"), {
 					Size = UDim2.new(0, 1, 1, 0),
-					Position = UDim2.new(0.5, 0, 0, 0)
-				}), "Stroke"), 
+					Position = UDim2.new(0.33, 0, 0, 0)
+				}), "Stroke"),
+				AddThemeObject(SetProps(MakeElement("Frame"), {
+					Size = UDim2.new(0, 1, 1, 0),
+					Position = UDim2.new(0.66, 0, 0, 0)
+				}), "Stroke"),
 				CloseBtn,
-				MinimizeBtn
+				MinimizeBtn,
+				EyeBtn -- 添加小眼睛按钮
 			}), "Second"), 
 		}),
 		DragPoint,
@@ -661,83 +672,52 @@ function OrionLib:MakeWindow(WindowConfig)
 		end
 	end)
 
--- 在MinimizeBtn.MouseButton1Up事件中
-AddConnection(MinimizeBtn.MouseButton1Up, function()
-    if Minimized then
-        -- 恢复正常窗口
-        TweenService:Create(MainWindow, TweenInfo.new(0.5), {
-            Size = UDim2.new(0, 615, 0, 344),
-            Position = UDim2.new(0.5, -307, 0.5, -172)
-        }):Play()
-        WindowStuff.Visible = true
-    else
-        -- 最小化为中等高度（示例尺寸：600x80）
-        TweenService:Create(MainWindow, TweenInfo.new(0.5), {
-            Size = UDim2.new(0, 600, 0, 80),
-            Position = UDim2.new(0.5, -300, 0.5, -40) -- 居中定位
-        }):Play()
-        WindowStuff.Visible = false
-        ShowEnhancedButtons() -- 调用增强按钮函数
-    end
-    Minimized = not Minimized
-end)
+	AddConnection(MinimizeBtn.MouseButton1Up, function()
+		if Minimized then
+			TweenService:Create(MainWindow, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Size = UDim2.new(0, 615, 0, 344)}):Play()
+			MinimizeBtn.Ico.Image = "rbxassetid://7072719338"
+			wait(.02)
+			MainWindow.ClipsDescendants = false
+			WindowStuff.Visible = true
+			WindowTopBarLine.Visible = true
+		else
+			MainWindow.ClipsDescendants = true
+			WindowTopBarLine.Visible = false
+			MinimizeBtn.Ico.Image = "rbxassetid://7072720870"
 
--- 增强按钮函数
-local function ShowEnhancedButtons()
-    local ButtonHolder = SetProps(MakeElement("TFrame"), {
-        Parent = MainWindow,
-        Size = UDim2.new(1, 0, 1, 0)
-    })
+			TweenService:Create(MainWindow, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Size = UDim2.new(0, WindowName.TextBounds.X + 140, 0, 50)}):Play()
+			wait(0.1)
+			WindowStuff.Visible = false	
+		end
+		Minimized = not Minimized    
+	end)
 
-    -- 加号按钮（展开）
-    SetProps(MakeElement("ImageButton", "rbxassetid://8848907031"), {
-        Parent = ButtonHolder,
-        Size = UDim2.new(0, 40, 0, 40),
-        Position = UDim2.new(1, -130, 0.5, 0),
-        AnchorPoint = Vector2.new(1, 0.5),
-        ImageColor3 = Color3.fromRGB(200, 200, 200),
-        UICorner = MakeElement("Corner", 0, 8)
-    }).MouseButton1Click:Connect(function()
-        Minimized = false
-        TweenService:Create(MainWindow, TweenInfo.new(0.5), {
-            Size = UDim2.new(0, 615, 0, 344)
-        }):Play()
-    end)
-
-    -- 减号按钮（最小化）
-    SetProps(MakeElement("ImageButton", "rbxassetid://8848907030"), {
-        Parent = ButtonHolder,
-        Size = UDim2.new(0, 40, 0, 40),
-        Position = UDim2.new(1, -80, 0.5, 0),
-        AnchorPoint = Vector2.new(1, 0.5),
-        ImageColor3 = Color3.fromRGB(200, 200, 200),
-        UICorner = MakeElement("Corner", 0, 8)
-    }).MouseButton1Click:Connect(function()
-        Minimized = true
-        TweenService:Create(MainWindow, TweenInfo.new(0.5), {
-            Size = UDim2.new(0, 600, 0, 80)
-        }):Play()
-    end)
-
-    -- 关闭按钮（完全隐藏）
-    SetProps(MakeElement("ImageButton", "rbxassetid://7072725342"), {
-        Parent = ButtonHolder,
-        Size = UDim2.new(0, 40, 0, 40),
-        Position = UDim2.new(1, -30, 0.5, 0),
-        AnchorPoint = Vector2.new(1, 0.5),
-        ImageColor3 = Color3.fromRGB(200, 200, 200),
-        UICorner = MakeElement("Corner", 0, 8)
-    }).MouseButton1Click:Connect(function()
-        MainWindow.Visible = false
-        Minimized = false
-        -- 调用原关闭通知
-        OrionLib:MakeNotification({
-            Name = "Interface Hidden",
-            Content = "Tap RightShift to reopen",
-            Time = 5
-        })
-    end)
-end
+	-- 小眼睛按钮功能
+	local EyeHidden = false
+	AddConnection(EyeBtn.MouseButton1Up, function()
+		if EyeHidden then
+			-- 显示窗口
+			TweenService:Create(MainWindow, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Size = UDim2.new(0, 615, 0, 344)}):Play()
+			EyeBtn.Ico.Image = "rbxassetid://7072720870"
+			wait(0.1)
+			MainWindow.ClipsDescendants = false
+			WindowStuff.Visible = true
+			WindowTopBarLine.Visible = true
+			Minimized = false
+		else
+			-- 隐藏窗口，只保留小眼睛
+			MainWindow.ClipsDescendants = true
+			WindowTopBarLine.Visible = false
+			EyeBtn.Ico.Image = "rbxassetid://7072719338"
+			
+			-- 缩小到只显示小眼睛按钮
+			TweenService:Create(MainWindow, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Size = UDim2.new(0, 105, 0, 30)}):Play()
+			wait(0.1)
+			WindowStuff.Visible = false
+			Minimized = true
+		end
+		EyeHidden = not EyeHidden
+	end)
 
 	local function LoadSequence()
 		MainWindow.Visible = false
@@ -1342,7 +1322,6 @@ end
 				}), "Second")
 
 				AddConnection(BindBox.Value:GetPropertyChangedSignal("Text"), function()
-					--BindBox.Size = UDim2.new(0, BindBox.Value.TextBounds.X + 16, 0, 24)
 					TweenService:Create(BindBox, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Size = UDim2.new(0, BindBox.Value.TextBounds.X + 16, 0, 24)}):Play()
 				end)
 
@@ -1468,7 +1447,6 @@ end
 				}), "Second")
 
 				AddConnection(TextboxActual:GetPropertyChangedSignal("Text"), function()
-					--TextContainer.Size = UDim2.new(0, TextboxActual.TextBounds.X + 16, 0, 24)
 					TweenService:Create(TextContainer, TweenInfo.new(0.45, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Size = UDim2.new(0, TextboxActual.TextBounds.X + 16, 0, 24)}):Play()
 				end)
 
