@@ -22,12 +22,12 @@ local OrionLib = {
 	Themes = {
 		Default = {
             -- Orange Theme
-			Main = Color3.fromRGB(225, 240, 240),
-			Second = Color3.fromRGB(255, 230, 240),
-			Stroke = Color3.fromRGB(255, 200, 220),
-			Divider = Color3.fromRGB(255, 200, 220),
-			Text = Color3.fromRGB(100, 50, 70),
-			TextDark = Color3.fromRGB(120, 70, 90)
+			Main = Color3.fromRGB(35, 30, 25),
+			Second = Color3.fromRGB(45, 40, 35),
+			Stroke = Color3.fromRGB(80, 70, 60),
+			Divider = Color3.fromRGB(80, 70, 60),
+			Text = Color3.fromRGB(255, 230, 200),
+			TextDark = Color3.fromRGB(180, 160, 140)
 		}
 	},
 	SelectedTheme = "Default",
@@ -503,20 +503,6 @@ function OrionLib:MakeWindow(WindowConfig)
 	local TabHolder = AddThemeObject(SetChildren(SetProps(MakeElement("ScrollFrame", Color3.fromRGB(255, 255, 255), 4), {
 		Size = UDim2.new(1, 0, 1, -50)
 	}), {
-	    -- 侧边栏渐变背景
-    SetChildren(SetProps(MakeElement("Frame"), {
-        Size = UDim2.new(1, 0, 1, 0),
-        BackgroundTransparency = 0,
-        ZIndex = -1
-    }), {
-        Create("UIGradient", {
-            Color = ColorSequence.new({
-                ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 230, 240)),
-                ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 240, 245))
-            }),
-            Rotation = 90
-        })
-    }),
 		MakeElement("List"),
 		MakeElement("Padding", 8, 0, 0, 8)
 	}), "Divider")
@@ -629,39 +615,10 @@ function OrionLib:MakeWindow(WindowConfig)
 		Size = UDim2.new(0, 550, 0, 310),
 		ClipsDescendants = true
 	}), {
-	
-	  SetChildren(SetProps(MakeElement("Frame"), {
-        Size = UDim2.new(1, 0, 1, 0),
-        BackgroundTransparency = 1,
-        ZIndex = -1
-    }), {
-        Create("UIGradient", {
-            Color = ColorSequence.new({
-                ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 220, 230)),  -- 顶部颜色
-                ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 240, 245))   -- 底部颜色
-            }),
-            Rotation = 90  -- 垂直渐变
-        })
-    }),
-	
 		SetChildren(SetProps(MakeElement("TFrame"), {
 			Size = UDim2.new(1, 0, 0, 50),
 			Name = "TopBar"
 		}), {
-		    -- 顶部栏渐变背景
-    SetChildren(SetProps(MakeElement("Frame"), {
-        Size = UDim2.new(1, 0, 1, 0),
-        BackgroundTransparency = 0,
-        ZIndex = -1
-    }), {
-        Create("UIGradient", {
-            Color = ColorSequence.new({
-                ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 200, 215)),  -- 左侧颜色
-                ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 180, 200))   -- 右侧颜色
-            }),
-            Rotation = 0  -- 水平渐变
-        })
-    }),
 			WindowName,
 			WindowTopBarLine,
 			AddThemeObject(SetChildren(SetProps(MakeElement("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 7), {
@@ -917,22 +874,6 @@ function OrionLib:MakeWindow(WindowConfig)
 					Size = UDim2.new(1, 0, 0, 33),
 					Parent = ItemParent
 				}), {
-				        -- 按钮渐变背景
-        SetChildren(SetProps(MakeElement("Frame"), {
-            Size = UDim2.new(1, 0, 1, 0),
-            BackgroundTransparency = 0,
-            ZIndex = -1
-        }), {
-            Create("UIGradient", {
-                Color = ColorSequence.new({
-                    ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 230, 240)),
-                    ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 220, 230))
-                }),
-                Rotation = 90
-            })
-        }),
-        -- ... 其他子元素 ...
-    }), "Second")
 					AddThemeObject(SetProps(MakeElement("Label", ButtonConfig.Name, 15), {
 						Size = UDim2.new(1, -12, 1, 0),
 						Position = UDim2.new(0, 12, 0, 0),
@@ -978,7 +919,7 @@ function OrionLib:MakeWindow(WindowConfig)
 				ToggleConfig.Default = ToggleConfig.Default or false
 				ToggleConfig.Callback = ToggleConfig.Callback or function() end
 				-- Orange Accent Color
-				ToggleConfig.Color = ToggleConfig.Color or Color3.fromRGB(255, 150, 180)
+				ToggleConfig.Color = ToggleConfig.Color or Color3.fromRGB(255, 120, 0)
 				ToggleConfig.Flag = ToggleConfig.Flag or nil
 				ToggleConfig.Save = ToggleConfig.Save or false
 
@@ -1065,7 +1006,7 @@ function OrionLib:MakeWindow(WindowConfig)
 				SliderConfig.Callback = SliderConfig.Callback or function() end
 				SliderConfig.ValueName = SliderConfig.ValueName or ""
 				-- Orange Accent Color
-				SliderConfig.Color = SliderConfig.Color or Color3.fromRGB(255, 150, 180)
+				SliderConfig.Color = SliderConfig.Color or Color3.fromRGB(255, 120, 0)
 				SliderConfig.Flag = SliderConfig.Flag or nil
 				SliderConfig.Save = SliderConfig.Save or false
 
