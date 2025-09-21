@@ -22,12 +22,12 @@ local OrionLib = {
 	Themes = {
 		Default = {
             -- Orange Theme
-			Main = Color3.fromRGB(35, 30, 25),
-			Second = Color3.fromRGB(45, 40, 35),
-			Stroke = Color3.fromRGB(80, 70, 60),
-			Divider = Color3.fromRGB(80, 70, 60),
-			Text = Color3.fromRGB(255, 230, 200),
-			TextDark = Color3.fromRGB(180, 160, 140)
+			Main = Color3.fromRGB(225, 240, 240),
+			Second = Color3.fromRGB(255, 230, 240),
+			Stroke = Color3.fromRGB(255, 200, 220),
+			Divider = Color3.fromRGB(255, 200, 220),
+			Text = Color3.fromRGB(100, 50, 70),
+			TextDark = Color3.fromRGB(120, 70, 90)
 		}
 	},
 	SelectedTheme = "Default",
@@ -919,7 +919,7 @@ function OrionLib:MakeWindow(WindowConfig)
 				ToggleConfig.Default = ToggleConfig.Default or false
 				ToggleConfig.Callback = ToggleConfig.Callback or function() end
 				-- Orange Accent Color
-				ToggleConfig.Color = ToggleConfig.Color or Color3.fromRGB(255, 120, 0)
+				ToggleConfig.Color = ToggleConfig.Color or Color3.fromRGB(255, 150, 180)
 				ToggleConfig.Flag = ToggleConfig.Flag or nil
 				ToggleConfig.Save = ToggleConfig.Save or false
 
@@ -1006,7 +1006,7 @@ function OrionLib:MakeWindow(WindowConfig)
 				SliderConfig.Callback = SliderConfig.Callback or function() end
 				SliderConfig.ValueName = SliderConfig.ValueName or ""
 				-- Orange Accent Color
-				SliderConfig.Color = SliderConfig.Color or Color3.fromRGB(255, 120, 0)
+				SliderConfig.Color = SliderConfig.Color or Color3.fromRGB(255, 150, 180)
 				SliderConfig.Flag = SliderConfig.Flag or nil
 				SliderConfig.Save = SliderConfig.Save or false
 
