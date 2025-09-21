@@ -503,6 +503,20 @@ function OrionLib:MakeWindow(WindowConfig)
 	local TabHolder = AddThemeObject(SetChildren(SetProps(MakeElement("ScrollFrame", Color3.fromRGB(255, 255, 255), 4), {
 		Size = UDim2.new(1, 0, 1, -50)
 	}), {
+	    -- 侧边栏渐变背景
+    SetChildren(SetProps(MakeElement("Frame"), {
+        Size = UDim2.new(1, 0, 1, 0),
+        BackgroundTransparency = 0,
+        ZIndex = -1
+    }), {
+        Create("UIGradient", {
+            Color = ColorSequence.new({
+                ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 230, 240)),
+                ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 240, 245))
+            }),
+            Rotation = 90
+        })
+    }),
 		MakeElement("List"),
 		MakeElement("Padding", 8, 0, 0, 8)
 	}), "Divider")
@@ -615,10 +629,39 @@ function OrionLib:MakeWindow(WindowConfig)
 		Size = UDim2.new(0, 550, 0, 310),
 		ClipsDescendants = true
 	}), {
+	
+	  SetChildren(SetProps(MakeElement("Frame"), {
+        Size = UDim2.new(1, 0, 1, 0),
+        BackgroundTransparency = 1,
+        ZIndex = -1
+    }), {
+        Create("UIGradient", {
+            Color = ColorSequence.new({
+                ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 220, 230)),  -- 顶部颜色
+                ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 240, 245))   -- 底部颜色
+            }),
+            Rotation = 90  -- 垂直渐变
+        })
+    }),
+	
 		SetChildren(SetProps(MakeElement("TFrame"), {
 			Size = UDim2.new(1, 0, 0, 50),
 			Name = "TopBar"
 		}), {
+		    -- 顶部栏渐变背景
+    SetChildren(SetProps(MakeElement("Frame"), {
+        Size = UDim2.new(1, 0, 1, 0),
+        BackgroundTransparency = 0,
+        ZIndex = -1
+    }), {
+        Create("UIGradient", {
+            Color = ColorSequence.new({
+                ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 200, 215)),  -- 左侧颜色
+                ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 180, 200))   -- 右侧颜色
+            }),
+            Rotation = 0  -- 水平渐变
+        })
+    }),
 			WindowName,
 			WindowTopBarLine,
 			AddThemeObject(SetChildren(SetProps(MakeElement("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 7), {
@@ -874,6 +917,22 @@ function OrionLib:MakeWindow(WindowConfig)
 					Size = UDim2.new(1, 0, 0, 33),
 					Parent = ItemParent
 				}), {
+				        -- 按钮渐变背景
+        SetChildren(SetProps(MakeElement("Frame"), {
+            Size = UDim2.new(1, 0, 1, 0),
+            BackgroundTransparency = 0,
+            ZIndex = -1
+        }), {
+            Create("UIGradient", {
+                Color = ColorSequence.new({
+                    ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 230, 240)),
+                    ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 220, 230))
+                }),
+                Rotation = 90
+            })
+        }),
+        -- ... 其他子元素 ...
+    }), "Second")
 					AddThemeObject(SetProps(MakeElement("Label", ButtonConfig.Name, 15), {
 						Size = UDim2.new(1, -12, 1, 0),
 						Position = UDim2.new(0, 12, 0, 0),
