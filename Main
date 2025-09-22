@@ -1725,7 +1725,4 @@ function OrionLib:ToggleUi()
 	Orion.Enabled = not Orion.Enabled
 end
 
-OrionLib.SaveConfig = SaveCfg 
-OrionLib.LoadConfig = LoadCfg
-
 return OrionLib
